@@ -6,7 +6,7 @@ import prisma from "../../../prisma/client";
 const adapter = PrismaAdapter(prisma);
 
 export const authOptions = {
-
+  // Configure one or more authentication providers
 
   DefaultAdapter: adapter,
   secret: process.env.AUTH_SECRET,
@@ -15,7 +15,7 @@ export const authOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
-   
+    // ...add more providers here
   ],
 };
 
