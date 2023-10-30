@@ -2,9 +2,12 @@
 import { useState, useEffect } from "react";
 import { DataGrid, GridValueGetterParams } from "@mui/x-data-grid";
 import axios from "axios";
-import { idID } from "@mui/material/locale";
-import { randomBytes, randomUUID } from "crypto";
+import { Dayjs } from "dayjs";
+import Loading from "./Loading";
 
+interface ScheduleProps {
+  selectedDate: Dayjs | null; // Accept the selected date as a prop
+}
 interface ScheduleItem {
   id: string;
 
@@ -25,21 +28,25 @@ interface ScheduleData {
   [shiftName: string]: ScheduleItem[];
 }
 
-function Schedule() {
+function Schedule({ selectedDate }: ScheduleProps) {
   const [schedule, setSchedule] = useState<ScheduleData>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch schedule data from your API route
-    axios.get("/api/schedule/generateSchedule").then((response) => {
-      setSchedule(response.data);
-      console.log("response.data from schedule", response.data);
-      setLoading(false);
-    });
-  }, []);
-
-  const getRowId = (row: any) => row.startTime;
-  
+    if (selectedDate) {
+      // Fetch schedule data from your API route with the selected date
+      axios
+        .get(
+          `/api/schedule/generateSchedule?date=${selectedDate.format(
+            "YYYY-MM-DD"
+          )}`
+        )
+        .then((response) => {
+          setSchedule(response.data);
+          setLoading(false);
+        });
+    }
+  }, [selectedDate]);
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -94,7 +101,7 @@ function Schedule() {
         if (params.row.table) {
           return params.row.table.name;
         } else {
-          return "N/A"; 
+          return "N/A";
         }
       },
     },
@@ -104,11 +111,9 @@ function Schedule() {
       width: 150,
       valueGetter: (params: GridValueGetterParams) => {
         if (params.row.breakSlot) {
-          // If it's a break slot, display "Break" within the time row
           return "Break";
         } else {
-          // If not a break slot, display an empty string
-          return "";
+          return "On duty";
         }
       },
     },
@@ -117,11 +122,11 @@ function Schedule() {
   return (
     <div style={{ width: "100%" }}>
       {loading ? (
-        <div>Loading schedule...</div>
+        <Loading />
       ) : (
         Object.keys(schedule).map((shiftName) => (
           <div key={shiftName}>
-            <h2>{shiftName} Shift</h2>
+            <h1 className="b text-black p-6">{shiftName} Shift</h1>
             <div style={{ height: 300, width: "100%" }}>
               <DataGrid
                 rows={schedule[shiftName]}

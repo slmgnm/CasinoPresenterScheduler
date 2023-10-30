@@ -5,6 +5,7 @@ import AddPresenter from "../components/AddPresenter";
 import Calendar from "../components/Calendar";
 import DataGrid from "../components/DataGrid";
 import Schedule from "../components/Schedule";
+import AllPresenters from "./AllPresenters";
 
 export default async function Dashboard() {
   const session = await getServerSession(authOptions);
@@ -17,10 +18,11 @@ export default async function Dashboard() {
         Welcome back {session?.user?.name}
       </h1>
       <div className="py-5">
+        <AllPresenters />
         <AddPresenter />
       </div>
-      <Schedule />
      
+
       <Calendar />
     </main>
   );
