@@ -10,60 +10,95 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model GamePresenter {
-  id        String    @id @default(cuid()) 
+  id        String     @id @default(cuid())
   name      String
-  shift     String   // Morning, Afternoon, Night
-  schedule  Schedule[]
+  shifts    Shift[] // Use a separate Shift model to represent shifts
+  breaks    Break[] // Use a separate Break model to represent breaks
+  schedules Schedule[] @relation("GamePresenterSchedule") // Add this line
 }
 
 model Table {
-  id        String   @id @default(cuid()) 
+  id        String     @id @default(cuid())
   name      String
-  schedule  Schedule[]
+  schedules Schedule[]
+}
+
+model Shift {
+  id             String          @id @default(cuid())
+  name           String
+  gamePresenters GamePresenter[] // Use a relation to link game presenters to shifts
 }
 
 model Schedule {
-  id              Int      @id @default(autoincrement())
+  id              Int            @id @default(autoincrement())
   startTime       DateTime
   endTime         DateTime
-  gamePresenter   GamePresenter? @relation(fields: [gamePresenterId], references: [id])
-  gamePresenterId String? 
-  table           Table? @relation(fields: [tableId], references: [id])
-  tableId         String? 
+  gamePresenter   GamePresenter? @relation("GamePresenterSchedule", fields: [gamePresenterId], references: [id])
+  gamePresenterId String?
+  table           Table?         @relation(fields: [tableId], references: [id])
+  tableId         String?
   breakSlot       Boolean
 }
 
-
-
-model Day {
-  id        String @id @default(cuid())
-  name      String // monday, tuesday, ...
-  dayOfWeek Int // @see getDay() documentation, 0 for Sunday, 1 for Monday, ...
-  openTime  String
-  closeTime String
+model Break {
+  id              Int            @id @default(autoincrement())
+  startTime       String
+  endTime         String
+  gamePresenter   GamePresenter? @relation(fields: [gamePresenterId], references: [id])
+  gamePresenterId String?
 }
 
-model ClosedDay {
-  id   String   @id @default(cuid())
-  date DateTime @unique
-}
+// model GamePresenter {
+//   id        String    @id @default(cuid()) 
+//   name      String
+//   shift     String   // Morning, Afternoon, Night
+//   schedule  Schedule[]
+// }
 
+// model Table {
+//   id        String   @id @default(cuid()) 
+//   name      String
+//   schedule  Schedule[]
+// }
+
+// model Schedule {
+//   id              Int      @id @default(autoincrement())
+//   startTime       DateTime
+//   endTime         DateTime
+//   gamePresenter   GamePresenter? @relation(fields: [gamePresenterId], references: [id])
+//   gamePresenterId String? 
+//   table           Table? @relation(fields: [tableId], references: [id])
+//   tableId         String? 
+//   breakSlot       Boolean
+// }
+
+// model Day {
+//   id        String @id @default(cuid())
+//   name      String // monday, tuesday, ...
+//   dayOfWeek Int // @see getDay() documentation, 0 for Sunday, 1 for Monday, ...
+//   openTime  String
+//   closeTime String
+// }
+
+// model ClosedDay {
+//   id   String   @id @default(cuid())
+//   date DateTime @unique
+// }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -94,4 +129,4 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-}   
+}

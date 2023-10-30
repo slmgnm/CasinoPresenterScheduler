@@ -7,27 +7,19 @@ import AddGamePresenter from "../components/AddPresenter";
 
 // import Logo from "../../public/logo.svg"
 
-
 export default async function Nav() {
   const session = await getServerSession(authOptions);
   // console.log("session", session);
   return (
-   
-   
     <nav className="flex justify-between items-center py-8">
-    
       <Link href={"/"}>
         <h1>home</h1>
-        <div className="">
-       
-        
-        </div>
+        <div className=""></div>
       </Link>
       <ul className="flex items-center gap-6">
         {!session?.user && <Login />}
         {session?.user && <Logged image={session.user?.image || ""} />}
       </ul>
     </nav>
-   
   );
 }

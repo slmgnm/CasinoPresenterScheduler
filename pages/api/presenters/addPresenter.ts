@@ -28,7 +28,7 @@ export default async function handler(
       //create a game presenter
       try {
         const result = await prisma.gamePresenter.create({
-          data: { name, shift },
+          data: { name},
         });
         res.status(200).json(result);
       } catch (error) {
