@@ -85,9 +85,9 @@ export default function Presenter({ name, id }: presenterProps) {
         animate={{ opacity: 1, scale: 1 }}
         initial={{ opacity: 0, scale: 0.8 }}
         transition={{ ease: "easeOut" }}
-        className=" mx-8 px-8 rounded-lg"
+        className="bg-white rounded-lg border border-gray-300 text-white mx-8 my-4 px-4 py-2 shadow-lg flex items-center justify-between"
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center space-x-2">
           <Avatar>{name.charAt(0)}</Avatar>
           <Typography
             sx={{ display: "inline" }}
@@ -98,6 +98,8 @@ export default function Presenter({ name, id }: presenterProps) {
             {name}
           </Typography>
           <Divider variant="inset" component="li" />
+        </div>
+        <div className="flex items-center space-x-2">
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -118,6 +120,7 @@ export default function Presenter({ name, id }: presenterProps) {
           </button>
         </div>
       </motion.div>
+
       {deleteToggle && (
         <Toggle deletePresenter={deletePresenter} setToggle={setDeleteToggle} />
       )}

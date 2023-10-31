@@ -8,7 +8,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === "GET") {
+  if (req.method === "POST") {
     try {
       // Fetch all Game Presenters, Tables, and Shifts
       const gamePresenters = await prisma.gamePresenter.findMany();
@@ -57,7 +57,7 @@ interface ScheduleItem {
   table: Table | null;
   breakSlot: boolean;
 }
-let idCounter = 1; 
+let idCounter = 1;
 
 function generateSchedule(
   gamePresenters: GamePresenter[],
@@ -123,7 +123,7 @@ function generateSchedule(
       tables.forEach((table, tableIndex) => {
         const gamePresenter = gamePresenters[slotIndex % gamePresenters.length];
         shiftSchedule.push({
-          id:idCounter++,
+          id: idCounter++,
           startTime: slotStartTime,
           endTime: slotEndTime,
           gamePresenter: {
@@ -135,7 +135,6 @@ function generateSchedule(
             name: table.name,
           },
           breakSlot: false,
-          
         });
       });
 
@@ -146,7 +145,7 @@ function generateSchedule(
 
         const gamePresenter = gamePresenters[slotIndex % gamePresenters.length];
         shiftSchedule.push({
-          id:idCounter++,
+          id: idCounter++,
           startTime: breakStartTime,
           endTime: breakEndTime,
           gamePresenter: {

@@ -40,24 +40,23 @@ export default function AddGameTable() {
   };
 
   return (
-    <div className="flex">
-      <form onSubmit={submitGameTable}>
-        <FormControl
-          sx={{ m: 1, minWidth: 120 }}
-          variant="standard"
-          onSubmit={submitGameTable}
-        >
-          <TextField
-            label="Name"
-            variant="outlined"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mr-2"
-          />
-          <Button type="submit">Add a new table</Button>
-        </FormControl>
-      </form>
-      <br />
-    </div>
+<div className="flex">
+  <form onSubmit={submitGameTable} className="flex items-center">
+    <FormControl
+      sx={{ m: 1, minWidth: 120 }}
+      variant="standard"
+    >
+      <TextField
+        label="Name"
+        variant="outlined"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        className="mr-2"
+      />
+    </FormControl>
+    <Button type="submit">Add a new table</Button>
+  </form>
+</div>
+
   );
 }

@@ -30,6 +30,7 @@ export default async function handler(
       const result = await prisma.table.create({
         data: { name },
       });
+      
       res.status(200).json(result);
     } catch (error) {
       res

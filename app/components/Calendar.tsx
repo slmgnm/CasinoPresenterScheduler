@@ -7,32 +7,28 @@ import React, { useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 
 import Schedule from "./Schedule"; // Import your Schedule component
-import { Typography } from "@mui/material";
-
-export default function Calendar() {
-  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(
-    dayjs("2022-04-17")
-  );
+import { Box, Typography } from "@mui/material";
+import PresenterSchedule from "./PresenterSchedule";
+interface CalendarProps {
+  selectedPresenterName?: string;
+}
+export default function Calendar({ selectedPresenterName }: CalendarProps) {
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
 
   const handleDateChange = (newDate: Dayjs | null) => {
     setSelectedDate(newDate);
   };
 
   return (
-    <div>
+    <Box>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DateCalendar value={selectedDate} onChange={handleDateChange} />
       </LocalizationProvider>
-      <h1 className="text-black">
-        Schedule Generated for{" "}
-        {selectedDate ? selectedDate.format("YYYY-MM-DD") : "No Date Selected"}
-      </h1>
       <Typography variant="h3" gutterBottom>
-      Schedule Generated for{" "}
+        Schedule Generated for{" "}
         {selectedDate ? selectedDate.format("YYYY-MM-DD") : "No Date Selected"}
       </Typography>
       <Schedule selectedDate={selectedDate} />{" "}
-      {/* Pass the selected date as a prop */}
-    </div>
+    </Box>
   );
 }

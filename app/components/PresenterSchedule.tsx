@@ -1,24 +1,21 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   DataGrid,
   GridCellParams,
   GridValueGetterParams,
 } from "@mui/x-data-grid";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { Dayjs } from "dayjs";
 import Loading from "./Loading";
 import Link from "next/link";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-import { Typography } from "@mui/material";
+
 interface ScheduleProps {
-  selectedDate: Dayjs | null;
   presenterId?: string | null;
 }
+
 export interface ScheduleItem {
   id: string;
-
   startTime: Date | string;
   endTime: Date | string;
   gamePresenter: {
@@ -36,26 +33,10 @@ interface ScheduleData {
   [shiftName: string]: ScheduleItem[];
 }
 
-function Schedule({ selectedDate }: ScheduleProps) {
+function PresenterSchedule({ presenterId }: ScheduleProps) {
   const [schedule, setSchedule] = useState<ScheduleData>({});
   const [loading, setLoading] = useState(true);
-  // const toastScheduleIdRef = useRef<string | undefined>(undefined);
-  // const queryClient = useQueryClient();
-
-  useEffect(() => {
-    if (selectedDate) {
-      axios
-        .post(
-          `/api/schedule/generateSchedule?date=${selectedDate.format(
-            "YYYY-MM-DD"
-          )}`
-        )
-        .then((response) => {
-          setSchedule(response.data);
-          setLoading(false);
-        });
-    }
-  }, [selectedDate]);
+  console.log("schedule", schedule);
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -140,7 +121,7 @@ function Schedule({ selectedDate }: ScheduleProps) {
       ) : (
         Object.keys(schedule).map((shiftName) => (
           <div key={shiftName}>
-            <Typography variant="h6" className="b text-black p-6">{shiftName} Shift</Typography>
+            <h1 className="b text-black p-6">{shiftName} Shift</h1>
             <div style={{ height: 300, width: "100%" }}>
               <DataGrid
                 rows={schedule[shiftName]}
@@ -164,4 +145,4 @@ function Schedule({ selectedDate }: ScheduleProps) {
   );
 }
 
-export default Schedule;
+export default PresenterSchedule;

@@ -40,15 +40,11 @@ const columns: GridColDef[] = [
   },
 ];
 
-const rows: GridRowsProp = [
-  { id: 1, firstName: "Hello", lastName: "World" },
-  { id: 2, firstName: "DataGridPro", lastName: "is Awesome" },
-  { id: 3, firstName: "MUI", lastName: "is Amazing" },
-];
+const rows: GridRowsProp = [];
 
 export default function DataGrid() {
   return (
-    <div>
+    
       <Box sx={{ height: 400, width: "100%" }}>
         <Grid
           rows={rows}
@@ -65,6 +61,6 @@ export default function DataGrid() {
           disableRowSelectionOnClick
         />
       </Box>
-    </div>
+    
   );
 }

@@ -1,62 +1,37 @@
 "use client";
 
-import AddComment from "@/app/components/AddComment";
-import Post from "@/app/components/Post";
-import { PostType } from "@/app/types/Post";
+import Calendar from "@/app/components/Calendar";
+import PresenterSchedule from "@/app/components/PresenterSchedule";
+import { DateCalendar } from "@mui/x-date-pickers";
+import { GamePresenter } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import Image from "next/image";
-import { motion } from "framer-motion";
-// import Loading from "../../../public/loading.svg"
+// import { motion } from "framer-motion";
+// import { useState } from "react";
+
 type URL = {
   params: {
     slug: string;
   };
 };
+
 const fetchDetails = async (slug: string) => {
   const response = await axios.get(`/api/presenters/${slug}`);
+  console.log("response.data", response.data);
   return response.data;
 };
-export default function PostDetail(url: URL) {
-  const { data, isLoading } = useQuery<PostType>({
-    queryKey: ["detail-post"],
+
+export default function PresenterDetail(url: URL) {
+  const { data, isLoading } = useQuery<GamePresenter>({
+    queryKey: ["detail-presenter"],
     queryFn: () => fetchDetails(url.params.slug),
   });
-
-
+  console.log("Data:", data);
   return (
     <div>
-      <Post
-        id={data?.id}
-        name={data?.user.name}
-        avatar={data?.user.image}
-        postTitle={data?.title}
-        comments={data?.comments}
-        likes={data?.likes}
-      />
-      <AddComment id={data?.id} />
-      
-      {data?.comments?.map((comment) => (
-        <motion.div
-          animate={{ opacity: 1, scale: 1 }}
-          initial={{ opacity: 0, scale: 0.8 }}
-          transition={{ ease: "easeOut" }}
-          className="my-6 bg-white p-8 rounded-md"
-          key={comment.id}
-        >
-          <div className="flex items-center gap-2">
-            <Image
-              width={24}
-              height={24}
-              src={comment.user?.image}
-              alt="avatar"
-            />
-            <h3 className="font-bold">{comment?.user?.name}</h3>
-            <h2 className="text-sm">{comment.createdAt}</h2>
-          </div>
-          <div className="py-4">{comment.title}</div>
-        </motion.div>
-      ))}
+      <h1>{data?.name}</h1>
+      presenterSchedule
+      <Calendar />
     </div>
   );
 }

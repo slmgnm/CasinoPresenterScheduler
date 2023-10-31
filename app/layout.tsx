@@ -22,7 +22,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`mx-4 md:mx-48 xl:mx-12 ${roboto.variable} bg-gray-200`}>
+      <body
+        className={`mx-4 md:mx-48 xl:mx-12 ${roboto.variable} bg-zinc-800 text-white`}
+      >
         <QueryWrapper>
           <Nav />
           {/* <AddGamePresenter/> */}

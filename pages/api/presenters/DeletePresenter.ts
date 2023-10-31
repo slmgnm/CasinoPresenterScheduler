@@ -9,12 +9,12 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "DELETE") {
-    const session = await getServerSession(req, res, authOptions);
-    if (!session) {
-      return res.status(401).json({ message: "Please signin to delete." });
-    }
+    // const session = await getServerSession(req, res, authOptions);
+    // if (!session) {
+    //   return res.status(401).json({ message: "Please signin to delete." });
+    // }
     const presenterId = req.body;
-    // console.log("postId in deletePost.ts", postId);
+
     try {
       const result = await prisma.gamePresenter.delete({
         where: {
