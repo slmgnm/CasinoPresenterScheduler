@@ -40,8 +40,8 @@ export default function AddGameTable() {
   };
 
   return (
-<div className="flex">
-  <form onSubmit={submitGameTable} className="flex items-center">
+<div className="flex min-w-full  bg-white rounded-lg border border-gray-300 text-white mx-8 my-4 px-4 py-2 shadow-lg  items-center justify-between">
+  <form onSubmit={submitGameTable} className="flex items-center space-x-2">
     <FormControl
       sx={{ m: 1, minWidth: 120 }}
       variant="standard"

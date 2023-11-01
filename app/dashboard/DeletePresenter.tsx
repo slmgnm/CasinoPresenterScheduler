@@ -90,11 +90,13 @@ export default function Presenter({ name, id }: presenterProps) {
         <div className="flex items-center space-x-2">
           <Avatar>{name.charAt(0)}</Avatar>
           <Typography
+          className="text-gray-700"
             sx={{ display: "inline" }}
             component="span"
             variant="body1"
-            color="text.primary"
+            color="black"
           >
+            
             {name}
           </Typography>
           <Divider variant="inset" component="li" />

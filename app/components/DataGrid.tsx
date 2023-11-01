@@ -44,23 +44,21 @@ const rows: GridRowsProp = [];
 
 export default function DataGrid() {
   return (
-    
-      <Box sx={{ height: 400, width: "100%" }}>
-        <Grid
-          rows={rows}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 5,
-              },
+    <Box sx={{ height: 400, width: "100%", color: "white" }}>
+      <Grid
+        rows={rows}
+        columns={columns}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 5,
             },
-          }}
-          pageSizeOptions={[5]}
-          checkboxSelection
-          disableRowSelectionOnClick
-        />
-      </Box>
-    
+          },
+        }}
+        pageSizeOptions={[5]}
+        checkboxSelection
+        disableRowSelectionOnClick
+      />
+    </Box>
   );
 }

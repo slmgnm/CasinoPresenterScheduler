@@ -13,7 +13,7 @@ export default async function Dashboard() {
     redirect("/api/auth/signin");
   }
   return (
-    <div className=" ">
+    <div className="min-w-full px-60">
       <Typography className=" text-2xl font-bold text-white">
         Welcome back {session?.user?.name}
       </Typography>

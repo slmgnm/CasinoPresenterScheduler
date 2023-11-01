@@ -20,7 +20,7 @@ export default function MyPosts(): JSX.Element {
   if (isLoading) return <Loading />;
   // console.log("data in myPosts", data);
   return (
-    <div>
+    <div className="min-w-full">
       {data?.map((presenter) => (
         <DeletePresenter name={presenter.name} id={presenter.id} />
       ))}

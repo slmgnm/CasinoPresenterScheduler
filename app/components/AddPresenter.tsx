@@ -14,7 +14,7 @@ export default function AddGamePresenter() {
   const toastGamePresenterIdRef = useRef<string | undefined>(undefined);
 
   const { mutate } = useMutation(
-    (data: { name: string}) =>
+    (data: { name: string }) =>
       axios.post("/api/presenters/addPresenter", data),
     {
       onError: (error) => {
@@ -28,7 +28,6 @@ export default function AddGamePresenter() {
         });
         queryClient.invalidateQueries(["presenters"]);
         setName("");
-       
       },
     }
   );
@@ -46,23 +45,19 @@ export default function AddGamePresenter() {
   };
 
   return (
-    <div className="flex">
-  <form onSubmit={submitGamePresenter} className="flex items-center">
-    <FormControl
-      sx={{ m: 1, minWidth: 120 }}
-      variant="standard"
-    >
-      <TextField
-        label="Name"
-        variant="outlined"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className="mr-2"
-      />
-    </FormControl>
-    <Button type="submit">Add Presenter</Button>
-  </form>
-</div>
-
+    <div className="flex min-w-full bg-white rounded-lg border border-gray-300 text-white mx-8 my-4 px-4 py-2 shadow-lg  items-center justify-between">
+      <form onSubmit={submitGamePresenter} className="flex items-center space-x-2 ">
+        <FormControl sx={{ m: 1, minWidth: 120 }} variant="standard">
+          <TextField
+            label="Name"
+            variant="outlined"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="mr-2"
+          />
+        </FormControl>
+        <Button type="submit">Add Presenter</Button>
+      </form>
+    </div>
   );
 }

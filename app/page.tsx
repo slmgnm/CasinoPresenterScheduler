@@ -22,7 +22,7 @@ export default function Home() {
 
   
   return (
-    <main className="">
+    <main className="bg-gray-500	">
       <Calendar />
     </main>
   );
