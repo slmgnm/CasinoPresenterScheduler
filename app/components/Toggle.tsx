@@ -2,15 +2,18 @@
 
 type ToggleProps = {
   deletePresenter: () => void;
-  setToggle: (toggle: boolean) => void;
+  setDeleteToggle: (deleteToggle: boolean) => void;
 };
 
-export default function Toggle({ deletePresenter, setToggle }: ToggleProps) {
+export default function Toggle({
+  deletePresenter,
+  setDeleteToggle,
+}: ToggleProps) {
   return (
     <div
       onClick={(e) => {
         e.stopPropagation();
-        setToggle(false);
+        setDeleteToggle(false);
       }}
       className="fixed bg-black/50 w-full h-full z-20 left-0 top-0 "
     >

@@ -45,18 +45,33 @@ export default function AddGamePresenter() {
   };
 
   return (
-    <div className="flex min-w-full bg-white rounded-lg border border-gray-300 text-white mx-8 my-4 px-4 py-2 shadow-lg  items-center justify-between">
-      <form onSubmit={submitGamePresenter} className="flex items-center space-x-2 ">
-        <FormControl sx={{ m: 1, minWidth: 120 }} variant="standard">
+    <div className="flex   min-w-full  rounded-lg border border-gray-300 text-white mx-8 my-4 px-4 py-2 shadow-lg  items-center ">
+      <form
+        onSubmit={submitGamePresenter}
+        className="flex justify-between items-center space-x-2 "
+      >
+        <FormControl
+          sx={{
+            m: 1,
+            minWidth: 120,
+            "& .MuiInputBase-input": { color: "white" },
+          }}
+          variant="standard"
+        >
           <TextField
             label="Name"
             variant="outlined"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="mr-2"
+            sx={{ "& .MuiInputBase-input": { color: "white" } }}
           />
         </FormControl>
-        <Button type="submit">Add Presenter</Button>
+      <div className="flex  items-center space-x-2 mx-3 ">
+        <button className="bg-gray-700 text-white text-sm px-6 py-2 rounded-md">
+          Add Presenter
+        </button>
+      </div>
       </form>
     </div>
   );

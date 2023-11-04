@@ -9,6 +9,8 @@ import { Button, FormControl, TextField } from "@mui/material";
 export default function AddGameTable() {
   const [name, setName] = useState("");
 
+
+
   const queryClient = useQueryClient();
   const toastGameTableIdRef = useRef<string | undefined>(undefined);
 
@@ -52,6 +54,7 @@ export default function AddGameTable() {
         value={name}
         onChange={(e) => setName(e.target.value)}
         className="mr-2"
+        
       />
     </FormControl>
     <Button type="submit">Add a new table</Button>

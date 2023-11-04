@@ -1,7 +1,7 @@
 "use client";
 import { Table } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
-import DeletePresenter from "./DeletePresenter";
+import DeletePresenter from "../components/DeletePresenter";
 
 import axios from "axios";
 import Loading from "../components/Loading";

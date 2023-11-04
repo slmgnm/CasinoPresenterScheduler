@@ -4,7 +4,7 @@
 
 :root {
   min-height: 100vh;
-  --foreground-rgb: rgb(222, 222, 226);
+  --foreground-rgb: 222, 222, 226;
   --background-rgb: rgb(75, 75, 76);
 }
 
@@ -19,10 +19,28 @@ body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
 }
-.css-l81uho-MuiTypography-root{
-  color: white;
-}
-.MuiDateCalendar-root{
-  color: white
+
+.MuiTypography-root {
+  color: white !important;
 }
 
+.MuiInputBase-input {
+  color: white !important;
+}
+
+.MuiInputLabel-root {
+  color: white !important;
+}
+
+.css-kzyyzb-MuiDataGrid-root{
+  color: white !important;
+}
+
+.css-1u23akw-MuiButtonBase-root-MuiPickersDay-root{
+  color: white !important;
+}
+.css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root{
+color: white !important;
+
+
+}
