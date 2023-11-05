@@ -1,5 +1,10 @@
+"use client";
 import React, { useState, useEffect } from "react";
-import { DataGrid, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridValueGetterParams, GridColDef } from "@mui/x-data-grid";
+import { Dayjs } from "dayjs";
+import axios from "axios";
+import Loading from "./Loading";
+import { Typography } from "@mui/material";
 
 export interface Shift {
   id: string | null;
@@ -26,20 +31,33 @@ interface ScheduleData {
   };
   shifts: Shift[];
 }
+interface ScheduleProps {
+  selectedDate: Dayjs | null;
+  presenterId?: string | null;
+}
 
-const ScheduleGrids = () => {
+const ScheduleGrids = ({ selectedDate }: ScheduleProps) => {
   const [scheduleData, setScheduleData] = useState<ScheduleData[]>([]);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    fetch("/api/schedule/generateSchedule")
-      .then((response) => response.json())
-      .then((data) => {
-        setScheduleData(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching schedule data", error);
-      });
-  }, []);
+    if (selectedDate) {
+      axios
+        .get(
+          `/api/schedule/generateSchedule?date=${selectedDate.format(
+            "YYYY-MM-DD"
+          )}`
+        )
+
+        .then((response) => {
+          setScheduleData(response.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching schedule data", error);
+          setLoading(false);
+        });
+    }
+  }, [selectedDate]);
 
   const columns = [
     {
@@ -80,32 +98,43 @@ const ScheduleGrids = () => {
   ];
 
   return (
-    <div>
-      {scheduleData.map((tableData, index) => (
-        <div key={index}>
-          <h2>{tableData.table.name}</h2>
-          {tableData.shifts.map((shift, shiftIndex) => (
-            <div key={shiftIndex}>
-              <h3>{shift.name} Shift</h3>
-              <DataGrid
-                rows={tableData.shifts
-                  .filter((s) => s.name === shift.name)
-                  .flatMap((s) =>
-                    s.slots.map((slot) => ({
-                      ...slot,
-                      shift: shift.name,
-                    }))
-                  )}
-                columns={columns}
-                checkboxSelection
-                getRowId={(row) => row.id}
-              />
-            </div>
-          ))}
-        </div>
-      ))}
+    <div className="max-w-4xl">
+      {loading ? (
+        <Loading />
+      ) : (
+        scheduleData.map((tableData, index) => (
+          <div key={index}>
+            <Typography variant="h4">{tableData.table.name}</Typography>
+            {tableData.shifts.map((shift, shiftIndex) => (
+              <div key={shiftIndex}>
+                <h3>{shift.name} Shift</h3>
+                <DataGrid
+                  rows={tableData.shifts
+                    .filter((s) => s.name === shift.name)
+                    .flatMap((s) =>
+                      s.slots.map((slot) => ({
+                        ...slot,
+                        shift: shift.name,
+                      }))
+                    )}
+                  columns={columns}
+                  checkboxSelection
+                  getRowId={(row) => row.id}
+                  initialState={{
+                    pagination: {
+                      paginationModel: {
+                        pageSize: 6,
+                      },
+                    },
+                  }}
+                  pageSizeOptions={[6]}
+                />
+              </div>
+            ))}
+          </div>
+        ))
+      )}
     </div>
   );
 };
-
 export default ScheduleGrids;

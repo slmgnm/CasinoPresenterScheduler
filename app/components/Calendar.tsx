@@ -25,7 +25,7 @@ export default function Calendar({ selectedPresenterName }: CalendarProps) {
   };
 
   return (
-    <Box>
+    <div className="" >
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DateCalendar value={selectedDate} onChange={handleDateChange}  />
       </LocalizationProvider>
@@ -34,6 +34,6 @@ export default function Calendar({ selectedPresenterName }: CalendarProps) {
         {selectedDate ? selectedDate.format("YYYY-MM-DD") : "No Date Selected"}
       </Typography>
       <Schedule selectedDate={selectedDate} />{" "}
-    </Box>
+    </div>
   );
 }

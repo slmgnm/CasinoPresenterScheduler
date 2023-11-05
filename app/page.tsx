@@ -9,12 +9,12 @@ import Loading from "./components/Loading";
 import Calendar from "./components/Calendar";
 import TextField from "@mui/material";
 
-import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+import { createTheme, ThemeProvider } from "@material-ui/core/styles";
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#ffffff',
+      main: "#ffffff",
     },
   },
 });
@@ -32,11 +32,10 @@ export default function Home() {
   if (isLoading) return <Loading />;
   if (error) return <div>Error: {error.toString()}</div>;
 
-  
   return (
-    <main className="bg-gray-500	">
+    <main className="flex justify-center	">
       <ThemeProvider theme={theme}>
-      <Calendar />
+        <Calendar />
       </ThemeProvider>
     </main>
   );
