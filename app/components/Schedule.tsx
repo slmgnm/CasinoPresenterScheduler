@@ -120,14 +120,14 @@ const ScheduleGrids = ({ selectedDate }: ScheduleProps) => {
                   columns={columns}
                   checkboxSelection
                   getRowId={(row) => row.id}
-                  initialState={{
-                    pagination: {
-                      paginationModel: {
-                        pageSize: 6,
-                      },
-                    },
-                  }}
-                  pageSizeOptions={[6]}
+                  // initialState={{
+                  //   pagination: {
+                  //     paginationModel: {
+                  //       pageSize: 6,
+                  //     },
+                  //   },
+                  // }}
+                  // pageSizeOptions={[6]}
                 />
               </div>
             ))}

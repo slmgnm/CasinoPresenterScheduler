@@ -134,9 +134,7 @@ function generateShiftSlots(
 ): ScheduleItem[] {
   const slots: ScheduleItem[] = [];
   const totalSlots = Math.ceil(shiftDurationMinutes / 20);
-
-  // Determine the game presenter who will take a break slot
-  const breakSlotPresenterIndex = getRandomIndex(gamePresenters.length);
+  const breakTakenByPresenter = new Array(gamePresenters.length).fill(false);
 
   for (let i = 0; i < totalSlots; i++) {
     const startTime = new Date(shiftStartTime);
@@ -144,15 +142,30 @@ function generateShiftSlots(
     const endTime = new Date(startTime);
     endTime.setMinutes(endTime.getMinutes() + 20);
 
-    const randomPresenterIndex = getRandomIndex(gamePresenters.length);
-    const presenter = gamePresenters[randomPresenterIndex];
-    const isBreakSlot = randomPresenterIndex === breakSlotPresenterIndex;
+    let presenterIndex;
+    let isBreakSlot = false;
+
+    // Check if all presenters have taken a break
+    if (breakTakenByPresenter.every((taken) => taken)) {
+      breakTakenByPresenter.fill(false);
+    }
+
+    // Find a presenter who hasn't taken a break yet
+    do {
+      presenterIndex = getRandomIndex(gamePresenters.length);
+    } while (breakTakenByPresenter[presenterIndex]);
+
+    // Assign a break slot to a presenter every 3 slots
+    if (i % 3 === 0) {
+      isBreakSlot = true;
+      breakTakenByPresenter[presenterIndex] = true;
+    }
 
     const slot: ScheduleItem = {
       id: i,
       startTime,
       endTime,
-      gamePresenter: presenter,
+      gamePresenter: gamePresenters[presenterIndex],
       table,
       breakSlot: isBreakSlot,
     };
