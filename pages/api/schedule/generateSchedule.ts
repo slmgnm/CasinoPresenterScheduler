@@ -1,4 +1,3 @@
-// Import Prisma and other dependencies
 import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -8,18 +7,35 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === "POST") {
+  if (req.method === "GET") {
     try {
       // Fetch all Game Presenters, Tables, and Shifts
       const gamePresenters = await prisma.gamePresenter.findMany();
       const tables = await prisma.table.findMany();
       const shifts = await prisma.shift.findMany();
 
-      // Implement your scheduling algorithm here
+      // Define shift start times and durations
+      const morningShiftStart = new Date();
+      morningShiftStart.setHours(7, 0, 0, 0);
+      const MORNING_SHIFT_DURATION_MINUTES = 480; // 8 hours
+      const AFTERNOON_SHIFT_DURATION_MINUTES = 480; // 8 hours
+      const NIGHT_SHIFT_DURATION_MINUTES = 480; // 8 hours
+      const afternoonShiftStartTime = new Date();
+      afternoonShiftStartTime.setHours(15, 0, 0, 0);
+      const nightShiftStartTime = new Date();
+      nightShiftStartTime.setHours(23, 0, 0, 0);
+
+      // Generate the schedule
       const generatedSchedule = generateSchedule(
         gamePresenters,
         tables,
-        shifts
+        shifts,
+        morningShiftStart,
+        MORNING_SHIFT_DURATION_MINUTES,
+        AFTERNOON_SHIFT_DURATION_MINUTES,
+        NIGHT_SHIFT_DURATION_MINUTES,
+        afternoonShiftStartTime,
+        nightShiftStartTime
       );
 
       res.status(200).json(generatedSchedule);
@@ -54,113 +70,95 @@ interface ScheduleItem {
   startTime: Date;
   endTime: Date;
   gamePresenter: GamePresenter;
-  table: Table | null;
+  table: Table;
   breakSlot: boolean;
 }
-let idCounter = 1;
 
 function generateSchedule(
   gamePresenters: GamePresenter[],
   tables: Table[],
-  shifts: Shift[]
-): Record<string, ScheduleItem[]> {
-  const scheduleByShift: Record<string, ScheduleItem[]> = {};
+  shifts: Shift[],
+  morningShiftStart: Date,
+  MORNING_SHIFT_DURATION_MINUTES: number,
+  AFTERNOON_SHIFT_DURATION_MINUTES: number,
+  NIGHT_SHIFT_DURATION_MINUTES: number,
+  afternoonShiftStartTime: Date,
+  nightShiftStartTime: Date
+): Array<{ table: Table; shifts: { name: string; slots: ScheduleItem[] }[] }> {
+  const scheduleByTable: Array<{
+    table: Table;
+    shifts: { name: string; slots: ScheduleItem[] }[];
+  }> = [];
 
-  // Define shift start times
-  const morningShiftStart = new Date();
-  morningShiftStart.setHours(7, 0, 0, 0);
+  for (const table of tables) {
+    const shiftsForTable: { name: string; slots: ScheduleItem[] }[] = [];
 
-  const afternoonShiftStart = new Date();
-  afternoonShiftStart.setHours(15, 0, 0, 0);
+    // Morning shift
+    const morningShiftSlots: ScheduleItem[] = generateShiftSlots(
+      gamePresenters,
+      table,
+      morningShiftStart,
+      MORNING_SHIFT_DURATION_MINUTES
+    );
+    shiftsForTable.push({ name: "Morning", slots: morningShiftSlots });
 
-  const nightShiftStart = new Date();
-  nightShiftStart.setHours(23, 0, 0, 0);
+    // Afternoon shift
+    const afternoonShiftSlots: ScheduleItem[] = generateShiftSlots(
+      gamePresenters,
+      table,
+      afternoonShiftStartTime,
+      AFTERNOON_SHIFT_DURATION_MINUTES
+    );
+    shiftsForTable.push({ name: "Afternoon", slots: afternoonShiftSlots });
 
-  // Calculate the duration of a shift in minutes (8 hours)
-  const SHIFT_DURATION_MINUTES = 480;
+    // Night shift
+    const nightShiftSlots: ScheduleItem[] = generateShiftSlots(
+      gamePresenters,
+      table,
+      nightShiftStartTime,
+      NIGHT_SHIFT_DURATION_MINUTES
+    );
+    shiftsForTable.push({ name: "Night", slots: nightShiftSlots });
 
-  // Calculate the number of time slots in a shift
-  const TIME_SLOT_DURATION = 20; // Duration in minutes
-  const numSlots = SHIFT_DURATION_MINUTES / TIME_SLOT_DURATION;
+    scheduleByTable.push({ table, shifts: shiftsForTable });
+  }
 
-  // Calculate the number of breaks based on the number of tables
-  const numBreaks = numSlots - tables.length;
+  return scheduleByTable;
+}
 
-  shifts.forEach((shift) => {
-    const shiftName = shift.name;
-    let shiftSchedule: ScheduleItem[] = [];
+function generateShiftSlots(
+  gamePresenters: GamePresenter[],
+  table: Table,
+  shiftStartTime: Date,
+  shiftDurationMinutes: number
+): ScheduleItem[] {
+  const slots: ScheduleItem[] = [];
+  const totalSlots = Math.ceil(shiftDurationMinutes / 20);
 
-    // Determine shift start and end times based on the shift name
-    let shiftStart, shiftEnd;
+  for (let i = 0; i < totalSlots; i++) {
+    const startTime = new Date(shiftStartTime);
+    startTime.setMinutes(startTime.getMinutes() + i * 20);
+    const endTime = new Date(startTime);
+    endTime.setMinutes(endTime.getMinutes() + 20);
 
-    switch (shiftName) {
-      case "Morning":
-        shiftStart = morningShiftStart;
-        break;
-      case "Afternoon":
-        shiftStart = afternoonShiftStart;
-        break;
-      case "Night":
-        shiftStart = nightShiftStart;
-        break;
-      default:
-        // Handle unknown shift names
-        console.error("Unknown shift name:", shift.name);
-        return;
-    }
+    const randomPresenterIndex = getRandomIndex(gamePresenters.length);
+    const presenter = gamePresenters[randomPresenterIndex];
 
-    shiftEnd = new Date(shiftStart);
-    shiftEnd.setMinutes(shiftEnd.getMinutes() + SHIFT_DURATION_MINUTES);
+    const slot: ScheduleItem = {
+      id: i,
+      startTime,
+      endTime,
+      gamePresenter: presenter,
+      table,
+      breakSlot: false,
+    };
 
-    for (let slotIndex = 0; slotIndex < numSlots; slotIndex++) {
-      const slotStartTime = new Date(shiftStart);
-      slotStartTime.setMinutes(
-        slotStartTime.getMinutes() + slotIndex * TIME_SLOT_DURATION
-      );
-      const slotEndTime = new Date(slotStartTime);
-      slotEndTime.setMinutes(slotEndTime.getMinutes() + TIME_SLOT_DURATION);
+    slots.push(slot);
+  }
 
-      tables.forEach((table, tableIndex) => {
-        const gamePresenter = gamePresenters[slotIndex % gamePresenters.length];
-        shiftSchedule.push({
-          id: idCounter++,
-          startTime: slotStartTime,
-          endTime: slotEndTime,
-          gamePresenter: {
-            id: gamePresenter.id,
-            name: gamePresenter.name,
-          },
-          table: {
-            id: table.id,
-            name: table.name,
-          },
-          breakSlot: false,
-        });
-      });
+  return slots;
+}
 
-      if (slotIndex < numBreaks) {
-        const breakStartTime = new Date(slotEndTime);
-        const breakEndTime = new Date(breakStartTime);
-        breakEndTime.setMinutes(breakEndTime.getMinutes() + TIME_SLOT_DURATION);
-
-        const gamePresenter = gamePresenters[slotIndex % gamePresenters.length];
-        shiftSchedule.push({
-          id: idCounter++,
-          startTime: breakStartTime,
-          endTime: breakEndTime,
-          gamePresenter: {
-            id: gamePresenter.id,
-            name: gamePresenter.name,
-          },
-          table: null,
-          breakSlot: true,
-        });
-      }
-    }
-
-    // Store the schedule for this shift in the scheduleByShift object
-    scheduleByShift[shiftName] = shiftSchedule;
-  });
-
-  return scheduleByShift;
+function getRandomIndex(length: number): number {
+  return Math.floor(Math.random() * length);
 }
