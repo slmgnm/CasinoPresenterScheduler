@@ -156,7 +156,8 @@ function generateShiftSlots(
     }
 
     // Assign a break slot to a presenter every 3 slots
-    if (i % 3 === 0) {
+    if (i % 3 === 0 && i !== 0) {
+      // Ensure the first slot is not a break
       isBreakSlot = true;
       breakTakenByPresenter[presenterIndex] = true;
     }
