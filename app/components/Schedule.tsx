@@ -72,7 +72,17 @@ const ScheduleGrids = ({ selectedDate }: ScheduleProps) => {
       width: 180,
       valueGetter: (params: GridValueGetterParams) => {
         if (params.row?.breakSlot) {
-          return "Break";
+          const startTime = new Date(params.row?.startTime);
+          const endTime = new Date(params.row?.endTime);
+          const formattedStartTime = startTime.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          const formattedEndTime = endTime.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          return `${formattedStartTime} Break`;
         } else {
           const startTime = new Date(params.row?.startTime);
           const endTime = new Date(params.row?.endTime);
