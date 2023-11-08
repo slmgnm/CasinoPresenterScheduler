@@ -135,7 +135,9 @@ function generateShiftSlots(
   const slots: ScheduleItem[] = [];
   const totalSlots = Math.ceil(shiftDurationMinutes / 20);
   const breakTakenByPresenter = new Array(gamePresenters.length).fill(false);
-  let presenterIndex = 0;
+
+  // Randomize the initial presenter index
+  let presenterIndex = Math.floor(Math.random() * gamePresenters.length);
 
   for (let i = 0; i < totalSlots; i++) {
     const startTime = new Date(shiftStartTime);
